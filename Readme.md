@@ -1,63 +1,63 @@
-# Node.js Style Guide
+# Javascript Style Guide
 
-This is a guide for writing consistent and aesthetically pleasing node.js code.
+This is a guide for writing consistent and aesthetically pleasing JS code.
 It is inspired by what is popular within the community, and flavored with some
 personal opinions.
 
-This guide was created by [Felix Geisendörfer](http://felixge.de/) and is
-licensed under the [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/)
+This guide was created by [Stuart P. Bentley](http://stuartpb.com), based on
+the style guide written by [Felix Geisendörfer](http://felixge.de/) licensed
+under the [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/)
 license. You are encouraged to fork this repository and make adjustments
 according to your preferences.
 
 ![Creative Commons License](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
-## 2 Spaces for indention
+## 2 spaces for indention
 
-Use 2 spaces for indenting your code and swear an oath to never mix tabs and
-spaces - a special kind of hell is awaiting you otherwise.
+Use 2 spaces for indenting your code. If your IDE doesn't insert spaces when
+you press the "tab" key, you insert the spaces with the spacebar until you can
+get to a decent text editor.
 
 ## Newlines
 
-Use UNIX-style newlines (`\n`), and a newline character as the last character
-of a file. Windows-style newlines (`\r\n`) are forbidden inside any repository.
+Files should use LF newlines (`\n`) rather than CRLF newlines (`\r\n`) in their
+repo-committed blob form. (If your development platform requires CRLF files,
+`git config core.autocrlf true` should be set.)
+
+Files should end with a newline at end of file.
+
+## UTF-8 encoding
+
+All JS files should be encoded as UTF-8.
 
 ## No trailing whitespace
 
-Just like you brush your teeth after every meal, you clean up any trailing
-whitespace in your JS files before committing. Otherwise the rotten smell of
-careless neglect will eventually drive away contributors and/or co-workers.
+The line feed character should never be preceded by any other whitespace
+characters. Set your editor to strip trailing whitespace on save.
 
-## Use Semicolons
+## Use semicolons
 
-According to [scientific research][hnsemicolons], the usage of semicolons is
-a core value of our community. Consider the points of [the opposition][], but
-be a traditionalist when it comes to abusing error correction mechanisms for
-cheap syntactic pleasures.
+There are arguments in favor of [perserving][hnsemicolons] and [omitting][izs]
+semicolons at the end of statements in JS. Understand the reasoning behind
+both, but
 
-[the opposition]: http://blog.izs.me/post/2353458699/an-open-letter-to-javascript-leaders-regarding
-[hnsemicolons]: http://news.ycombinator.com/item?id=1547647
+[izs]: http://blog.izs.me/post/2353458699/an-open-letter-to-javascript-leaders-regarding
+[hn]: http://news.ycombinator.com/item?id=1547647
 
 ## 80 characters per line
 
-Limit your lines to 80 characters. Yes, screens have gotten much bigger over the
-last few years, but your brain has not. Use the additional room for split screen,
-your editor supports that, right?
+Limit your lines to 80 characters wherever possible. This allows for easier
+visual parsing (less eye travel), as well as providing the ability to keep
+multiple files open side-by-side.
 
-## Use single quotes
+## Quoting strings
 
-Use single quotes, unless you are writing JSON.
+Strings should be quoted in whatever form will need the fewest quote-escapes:
+when writing strings with embedded code (such as HTML), single-quotes should be
+used to delimit the JS string and double-quotes for the embedded strings.
 
-*Right:*
-
-```js
-var foo = 'bar';
-```
-
-*Wrong:*
-
-```js
-var foo = "bar";
-```
+When neither quote style appears in the string, double quotes should be used
+(although single-quotes are acceptable for more 'token'-esque string usages).
 
 ## Opening braces go on the same line
 
@@ -84,9 +84,9 @@ Also, notice the use of whitespace before and after the condition statement.
 
 ## Declare one variable per var statement
 
-Declare one variable per var statement, it makes it easier to re-order the
-lines. Ignore [Crockford][crockfordconvention] on this, and put those
-declarations wherever they make sense.
+Declare one variable per var statement. This makes it easier to re-order the
+lines. Declare variables wherever they make sense, but be aware of how
+Javascript hoists variable declarations to the top of the function scope.
 
 *Right:*
 
@@ -114,8 +114,6 @@ while (items.length) {
   object[key] = values.pop();
 }
 ```
-
-[crockfordconvention]: http://javascript.crockford.com/code.html
 
 ## Use lowerCamelCase for variables, properties and function names
 
@@ -195,7 +193,7 @@ keys when your interpreter complains:
 var a = ['hello', 'world'];
 var b = {
   good: 'code',
-  'is generally': 'pretty',
+  "is generally": 'pretty',
 };
 ```
 
@@ -210,156 +208,31 @@ var b = {"good": 'code'
         };
 ```
 
-## Use the === operator
+## Use the == operator
 
-Programming is not about remembering [stupid rules][comparisonoperators]. Use
-the triple equality operator as it will work just as expected.
+Understand how type coercion works, and only use === and !== in places where
+you know type coercion will produce unwanted results (usually only when you're
+using functions that legitimately expect multiple types for their arguments).
+In all other cases, use == and !=.
 
-*Right:*
+## Use single-line ternary operators
 
-```js
-var a = 0;
-if (a === '') {
-  console.log('winning');
-}
-
-```
-
-*Wrong:*
+If your ternary operator can't fit on a single line, you might be abusing the
+ternary operator. Consider putting more complex ternary statements into a
+conditional variable assignment.
 
 ```js
-var a = 0;
-if (a == '') {
-  console.log('losing');
-}
-```
-
-[comparisonoperators]: https://developer.mozilla.org/en/JavaScript/Reference/Operators/Comparison_Operators
-
-## Use multi-line ternary operator
-
-The ternary operator should not be used on a single line. Split it up into multiple lines instead.
-
-*Right:*
-
-```js
-var foo = (a === b)
-  ? 1
-  : 2;
-```
-
-*Wrong:*
-
-```js
-var foo = (a === b) ? 1 : 2;
+return a > b ? a : b;
 ```
 
 ## Do not extend built-in prototypes
 
-Do not extend the prototype of native JavaScript objects. Your future self will
-be forever grateful.
+Unless you're a polyfill, don't extend the prototype of native Javascript
+objects.
 
-*Right:*
+## Name anonymous functions
 
-```js
-var a = [];
-if (!a.length) {
-  console.log('winning');
-}
-```
-
-*Wrong:*
-
-```js
-Array.prototype.empty = function() {
-  return !this.length;
-}
-
-var a = [];
-if (a.empty()) {
-  console.log('losing');
-}
-```
-
-## Use descriptive conditions
-
-Any non-trivial conditions should be assigned to a descriptively named variable or function:
-
-*Right:*
-
-```js
-var isValidPassword = password.length >= 4 && /^(?=.*\d).{4,}$/.test(password);
-
-if (isValidPassword) {
-  console.log('winning');
-}
-```
-
-*Wrong:*
-
-```js
-if (password.length >= 4 && /^(?=.*\d).{4,}$/.test(password)) {
-  console.log('losing');
-}
-```
-
-## Write small functions
-
-Keep your functions short. A good function fits on a slide that the people in
-the last row of a big room can comfortably read. So don't count on them having
-perfect vision and limit yourself to ~15 lines of code per function.
-
-## Return early from functions
-
-To avoid deep nesting of if-statements, always return a function's value as early
-as possible.
-
-*Right:*
-
-```js
-function isPercentage(val) {
-  if (val < 0) {
-    return false;
-  }
-
-  if (val > 100) {
-    return false;
-  }
-
-  return true;
-}
-```
-
-*Wrong:*
-
-```js
-function isPercentage(val) {
-  if (val >= 0) {
-    if (val < 100) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
-```
-
-Or for this particular example it may also be fine to shorten things even
-further:
-
-```js
-function isPercentage(val) {
-  var isInRange = (val >= 0 && val <= 100);
-  return isInRange;
-}
-```
-
-## Name your closures
-
-Feel free to give your closures a name. It shows that you care about them, and
-will produce better stack traces, heap and cpu profiles.
+Named anonymous functions produce better stack traces, heap and cpu profiles.
 
 *Right:*
 
@@ -377,31 +250,11 @@ req.on('end', function() {
 });
 ```
 
-## No nested closures
+## Use nested functions
 
-Use closures, but don't nest them. Otherwise your code will become a mess.
-
-*Right:*
-
-```js
-setTimeout(function() {
-  client.connect(afterConnect);
-}, 1000);
-
-function afterConnect() {
-  console.log('winning');
-}
-```
-
-*Wrong:*
-
-```js
-setTimeout(function() {
-  client.connect(function() {
-    console.log('losing');
-  });
-}, 1000);
-```
+Functions should be scoped within the context in which they're relevant, if
+doing so allows them to omit parameters that would otherwise have to be passed
+as arguments..
 
 ## Use slashes for comments
 
@@ -446,17 +299,3 @@ if (isSessionValid) {
   // ...
 }
 ```
-
-## Object.freeze, Object.preventExtensions, Object.seal, with, eval
-
-Crazy shit that you will probably never need. Stay away from it.
-
-## Getters and setters
-
-Do not use setters, they cause more problems for people who try to use your
-software than they can solve.
-
-Feel free to use getters that are free from [side effects][sideeffect], like
-providing a length property for a collection class.
-
-[sideeffect]: http://en.wikipedia.org/wiki/Side_effect_(computer_science)
